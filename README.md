@@ -10,7 +10,11 @@ The project was first designed on paper and then implemented and tested in VS Co
 
 ## Team Members
 
-* Prarthana HS
+## Team Members
+
+- Prarthana HS — C Implementation, Data Structure & Core Features
+- Pradnya — Testing, Debugging & Test Cases
+- Priya — Documentation, README/HELP & GitHub Collaboration
 
 ## Objectives
 
