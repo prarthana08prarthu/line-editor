@@ -11,6 +11,7 @@ int lineCount = 0;
 /* Function Prototypes */
 void insertLine(int lineNumber, char *text);
 void deleteLine(int lineNumber);
+void modifyLine(int lineNumber, char *text);
 void displayDocument(void);
 void showLineCount(void);
 void showHelp(void);
@@ -52,6 +53,18 @@ int main(void)
             scanf("%d", &lineNumber);
 
             deleteLine(lineNumber);
+        }
+        else if (command == 'M' || command == 'm')
+        {
+            scanf("%d", &lineNumber);
+
+            getchar();
+
+            fgets(text, MAX_LENGTH, stdin);
+
+            text[strcspn(text, "\n")] = '\0';
+
+            modifyLine(lineNumber, text);
         }
         else if (command == 'P' || command == 'p')
         {
@@ -101,7 +114,7 @@ void insertLine(int lineNumber, char *text)
         lines[i] = lines[i - 1];
     }
 
-    /* Allocate memory for new line */
+    /* Allocate memory for the new line */
     lines[lineNumber - 1] = malloc(strlen(text) + 1);
 
     if (lines[lineNumber - 1] == NULL)
@@ -148,6 +161,43 @@ void deleteLine(int lineNumber)
     printf("Line deleted successfully.\n");
 }
 
+/* Modify an existing line */
+void modifyLine(int lineNumber, char *text)
+{
+    char *newLine;
+
+    if (lineCount == 0)
+    {
+        printf("Error: Document is empty.\n");
+        return;
+    }
+
+    if (lineNumber < 1 || lineNumber > lineCount)
+    {
+        printf("Error: Invalid line number.\n");
+        return;
+    }
+
+    /* Allocate memory for the new text */
+    newLine = malloc(strlen(text) + 1);
+
+    if (newLine == NULL)
+    {
+        printf("Error: Memory allocation failed.\n");
+        return;
+    }
+
+    strcpy(newLine, text);
+
+    /* Free the old line */
+    free(lines[lineNumber - 1]);
+
+    /* Store the new line */
+    lines[lineNumber - 1] = newLine;
+
+    printf("Line modified successfully.\n");
+}
+
 /* Display the document */
 void displayDocument(void)
 {
@@ -179,6 +229,7 @@ void showHelp(void)
     printf("\n========== HELP ==========\n");
     printf("I <line> <text>  - Insert a new line\n");
     printf("D <line>         - Delete a line\n");
+    printf("M <line> <text>  - Modify an existing line\n");
     printf("P                - Display document\n");
     printf("C                - Show line count\n");
     printf("H                - Show help\n");

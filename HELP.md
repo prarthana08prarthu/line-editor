@@ -2,14 +2,15 @@
 
 ## Commands
 
-| Command           | Description                       | Example     |
-| ----------------- | --------------------------------- | ----------- |
-| `I <line> <text>` | Insert a new line                 | `I 1 Hello` |
-| `D <line>`        | Delete a line                     | `D 2`       |
-| `P`               | Display the complete document     | `P`         |
-| `C`               | Display the total number of lines | `C`         |
-| `H`               | Display the help menu             | `H`         |
-| `Q`               | Quit the editor                   | `Q`         |
+| Command           | Description                       | Example           |
+| ----------------- | --------------------------------- | ----------------- |
+| `I <line> <text>` | Insert a new line                 | `I 1 Hello`       |
+| `D <line>`        | Delete a line                     | `D 2`             |
+| `M <line> <text>` | Modify an existing line           | `M 1 Hello World` |
+| `P`               | Display the complete document     | `P`               |
+| `C`               | Display the total number of lines | `C`               |
+| `H`               | Display the help menu             | `H`               |
+| `Q`               | Quit the editor                   | `Q`               |
 
 ## How to Use
 
@@ -45,7 +46,15 @@ Enter:
 
 This deletes line 2 and shifts the remaining lines upward.
 
-### 5. Count lines
+### 5. Modify a line
+
+Enter:
+
+`M 1 Hello World`
+
+This replaces the existing text on line 1 with "Hello World".
+
+### 6. Count lines
 
 Enter:
 
@@ -53,7 +62,7 @@ Enter:
 
 This displays the current number of lines.
 
-### 6. Quit
+### 7. Quit
 
 Enter:
 
@@ -87,5 +96,6 @@ Maximum line length: **199 characters**
 
 * Insert: O(n)
 * Delete: O(n)
+* Modify: O(n) for text allocation/replacement
 * Display: O(n)
-* Line Count: O(1)
+* Line count: O(1)

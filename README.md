@@ -2,20 +2,33 @@
 
 ## Project Description
 
-This project implements a simple command-line line editor using the C programming language.
+This project implements a simple command-line Line Editor using the C programming language.
 
-The editor allows users to insert, delete, and display lines of text. It also provides a line count feature, help menu, and safe exit with memory cleanup.
+The editor allows users to create, view, insert, delete, and modify lines of a text document through terminal-based commands.
+
+The project was first designed on paper and then implemented and tested in VS Code using GCC. The completed project is documented and maintained in a GitHub repository as a portfolio artifact.
 
 ## Team Members
 
 * Prarthana HS
 
+## Objectives
+
+* Understand how a text editor manages lines of a document.
+* Design the data structure before implementation.
+* Implement line operations using C.
+* Practice arrays, strings, functions, loops, and dynamic memory allocation.
+* Handle invalid input and memory safely.
+* Use Git and GitHub to document and maintain the project.
+
 ## Features
 
 ### Core Features
 
+* Create and store text lines
 * Insert a line at a specified position
 * Delete a line from a specified position
+* Modify an existing line
 * Display the complete document
 
 ### Additional Features
@@ -26,6 +39,18 @@ The editor allows users to insert, delete, and display lines of text. It also pr
 * Dynamic memory allocation
 * Memory cleanup before exiting
 
+## Commands
+
+| Command           | Description                       | Example           |
+| ----------------- | --------------------------------- | ----------------- |
+| `I <line> <text>` | Insert a new line                 | `I 1 Hello`       |
+| `D <line>`        | Delete a line                     | `D 2`             |
+| `M <line> <text>` | Modify an existing line           | `M 1 Hello World` |
+| `P`               | Display the complete document     | `P`               |
+| `C`               | Display the total number of lines | `C`               |
+| `H`               | Display the help menu             | `H`               |
+| `Q`               | Quit the editor                   | `Q`               |
+
 ## Data Structure
 
 The project uses an array of dynamically allocated strings:
@@ -34,22 +59,111 @@ The project uses an array of dynamically allocated strings:
 char *lines[MAX_LINES];
 ```
 
-Each element stores one line of the document.
+Each element of the array stores one line of the document.
 
-The maximum number of lines is 100.
+The constants used are:
 
-## Commands
+```c
+#define MAX_LINES 100
+#define MAX_LENGTH 200
+```
 
-| Command           | Description        | Example     |
-| ----------------- | ------------------ | ----------- |
-| `I <line> <text>` | Insert a line      | `I 1 Hello` |
-| `D <line>`        | Delete a line      | `D 2`       |
-| `P`               | Display document   | `P`         |
-| `C`               | Display line count | `C`         |
-| `H`               | Show help          | `H`         |
-| `Q`               | Quit               | `Q`         |
+Therefore, the editor can store up to **100 lines**, with each input line supporting up to **199 characters** plus the null terminator.
 
-## Example
+### Why This Data Structure?
+
+An array of character pointers is suitable for a small command-line editor because:
+
+* Each line can have a different length.
+* Lines can be accessed using their index.
+* Insertion and deletion can be implemented by shifting pointers.
+* Dynamic memory allows each line to use only the memory it needs.
+
+## Project Structure
+
+```text
+line-editor/
+│
+├── .gitignore
+├── HELP.md
+├── README.md
+└── line_editor.c
+```
+
+## Program Functions
+
+The program is divided into separate functions:
+
+| Function            | Purpose                                   |
+| ------------------- | ----------------------------------------- |
+| `main()`            | Handles commands and controls the program |
+| `insertLine()`      | Inserts a new line                        |
+| `deleteLine()`      | Deletes an existing line                  |
+| `modifyLine()`      | Modifies an existing line                 |
+| `displayDocument()` | Displays all lines                        |
+| `showLineCount()`   | Displays the number of lines              |
+| `showHelp()`        | Displays available commands               |
+| `freeDocument()`    | Releases allocated memory                 |
+
+## How the Editor Works
+
+### Insert
+
+The command:
+
+```text
+I 1 Hello
+```
+
+inserts `Hello` as line 1.
+
+When a line is inserted in the middle of the document, existing line pointers are shifted downward to make space.
+
+### Delete
+
+The command:
+
+```text
+D 2
+```
+
+deletes line 2.
+
+The memory allocated for that line is released using `free()`, and the remaining lines are shifted upward.
+
+### Modify
+
+The command:
+
+```text
+M 1 Hello World
+```
+
+replaces the existing contents of line 1.
+
+The old memory is released and new memory is allocated for the modified text.
+
+### Display
+
+The command:
+
+```text
+P
+```
+
+displays all lines with their line numbers.
+
+### Line Count
+
+The command:
+
+```text
+C
+```
+
+displays the current number of lines.
+
+## Example Run
 
 ```text
 =====================================
@@ -63,23 +177,39 @@ Line inserted successfully.
 > I 2 Welcome to C
 Line inserted successfully.
 
+> I 2 This is line two
+Line inserted successfully.
+
 > P
 
 ----- DOCUMENT -----
 1: Hello
-2: Welcome to C
+2: This is line two
+3: Welcome to C
+--------------------
+
+> M 1 Hello World
+Line modified successfully.
+
+> P
+
+----- DOCUMENT -----
+1: Hello World
+2: This is line two
+3: Welcome to C
 --------------------
 
 > C
-Total number of lines: 2
+Total number of lines: 3
 
-> D 1
+> D 2
 Line deleted successfully.
 
 > P
 
 ----- DOCUMENT -----
-1: Welcome to C
+1: Hello World
+2: Welcome to C
 --------------------
 
 > Q
@@ -96,7 +226,7 @@ Compile the program using:
 gcc line_editor.c -o line_editor
 ```
 
-## Run
+## Running the Program
 
 ### Windows PowerShell
 
@@ -110,18 +240,9 @@ gcc line_editor.c -o line_editor
 ./line_editor
 ```
 
-## Complexity
-
-| Operation  | Time Complexity |
-| ---------- | --------------- |
-| Insert     | O(n)            |
-| Delete     | O(n)            |
-| Display    | O(n)            |
-| Line Count | O(1)            |
-
 ## Error Handling
 
-The program checks for:
+The program handles the following situations:
 
 * Invalid line numbers
 * Empty document
@@ -129,24 +250,100 @@ The program checks for:
 * Memory allocation failure
 * Unknown commands
 
-## Memory Management
-
-Each inserted line is dynamically allocated using `malloc()`.
-
-When a line is deleted, its allocated memory is released using `free()`.
-
-Before the program exits, all remaining allocated memory is freed.
-
-## Files
+For example, attempting to delete a line from an empty document produces:
 
 ```text
-line-editor/
-│
-├── line_editor.c
-├── HELP.md
-└── README.md
+Error: Document is empty.
 ```
+
+## Memory Management
+
+The program uses dynamic memory allocation with `malloc()`.
+
+When a line is inserted, memory is allocated based on the length of the text.
+
+When a line is deleted or modified, the previously allocated memory is released using `free()`.
+
+Before the program exits, `freeDocument()` releases all remaining allocated memory.
+
+This prevents unnecessary memory usage and helps avoid memory leaks.
+
+## Time Complexity
+
+| Operation  | Time Complexity |
+| ---------- | --------------- |
+| Insert     | O(n)            |
+| Delete     | O(n)            |
+| Modify     | O(n)            |
+| Display    | O(n)            |
+| Line Count | O(1)            |
+
+The insert and delete operations may require shifting multiple line pointers.
+
+## Design Process
+
+Before coding, the data structure and core algorithms were designed on paper.
+
+The paper design includes:
+
+* Problem understanding
+* Required features
+* Data structure
+* Data structure diagram
+* Command table
+* Insert algorithm
+* Delete algorithm
+* Modify logic
+* Display algorithm
+* Line count algorithm
+* Function design
+* Program flow
+* Error handling
+* Complexity analysis
+
+## Testing
+
+The program was compiled using GCC and tested through the terminal.
+
+The following operations were tested:
+
+* Inserting lines
+* Displaying lines
+* Modifying lines
+* Deleting lines
+* Counting lines
+* Displaying help
+* Invalid line numbers
+* Empty document operations
+* Quitting and freeing memory
+
+## Technologies Used
+
+* **Language:** C
+* **Compiler:** GCC
+* **IDE:** Visual Studio Code
+* **Version Control:** Git
+* **Repository:** GitHub
+
+## Learning Outcomes
+
+Through this project, the following concepts were practiced:
+
+* C functions
+* Arrays
+* Character strings
+* Pointers
+* Dynamic memory allocation
+* `malloc()` and `free()`
+* Loops
+* Conditional statements
+* Command-line input
+* Error handling
+* Algorithm design
+* Git and GitHub
 
 ## Conclusion
 
-This project demonstrates the implementation of a basic command-line text editor using arrays, strings, dynamic memory allocation, functions, loops, and error handling in C.
+The Simple Line Editor demonstrates how basic text-editing operations can be implemented using C.
+
+The project combines data structure design, algorithm implementation, dynamic memory management, testing, documentation, and GitHub-based version control into a small command-line application 
